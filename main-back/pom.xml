@@ -22,10 +22,17 @@
 
         <junit5.version>5.4.1</junit5.version>
         <start-class>com.funsies.multystream.App</start-class>
-        <spring.config.location>D:\Developer\workspace\Multystream\backend\</spring.config.location>
         <spring.config.name>config.yml</spring.config.name>
 
+        <flyway.version>6.0.0-beta2</flyway.version>
+
+        <jooq.version>3.11.11</jooq.version>
         <jooq.config>jooq-config.xml</jooq.config>
+
+        <h2.version>1.4.197</h2.version>
+
+        <generatedDir>${basedir}/src/generated/java</generatedDir>
+
 
     </properties>
 
@@ -88,8 +95,18 @@
             <artifactId>postgresql</artifactId>
             <version>9.1-901-1.jdbc4</version>
         </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.5.4</version>
+        </dependency>
+    </dependencies>
 
 
     <build>
@@ -101,7 +118,7 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>5.2.4</version>
+                <version>${flyway.version}</version>
                 <configuration>
                     <driver>org.postgresql.Driver</driver>
                     <url>${db.url}</url>
@@ -123,7 +140,7 @@
                     <dependency>
                         <groupId>com.h2database</groupId>
                         <artifactId>h2</artifactId>
-                        <version>1.4.197</version>
+                        <version>${h2.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -139,7 +156,7 @@
                            Import the others manually from your distribution -->
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
-                <version>3.11.11</version>
+                <version>${jooq.version}</version>
 
                 <executions>
                     <execution>
@@ -155,6 +172,26 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/generated</directory>
+                            <!--                            <includes>-->
+                            <!--                                <include>**/*.tmp</include>
+                                        <include>**/*.log</include>-->
+                            <!--                            </includes>-->
+                            <!--                            <excludes>-->
+                            <!--                                <exclude>**/important.log</exclude>-->
+                            <!--                                <exclude>**/another-important.log</exclude>-->
+                            <!--                            </excludes>-->
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -169,12 +206,30 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>src/generated/java</source>
+                                <source>${generatedDir}</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jsonschema2pojo</groupId>
+                <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <configuration>
+                    <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
+                    <targetPackage>com.jackcole.chronus.generated.schema</targetPackage>
+                    <outputDirectory>${generatedDir}</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
 
         </plugins>
 

@@ -56,3 +56,4 @@ Columns
 * **display_name** - The name visible to users
 * **value** - The value of the parameter
 * **type** - The data type of the value
+* **read_only** - Determines if a parameter can be altered in the UI.

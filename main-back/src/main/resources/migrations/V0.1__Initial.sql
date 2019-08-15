@@ -1,5 +1,5 @@
 CREATE TYPE STREAM_TYPE AS ENUM ('log', 'performance', 'storage');
-CREATE TYPE VARIABLE_TYPE AS ENUM ('string', 'integer', 'decimal', 'date', 'time');
+CREATE TYPE PARAMETER_VALUE_TYPE AS ENUM ('string', 'integer', 'decimal', 'date', 'time');
 
 CREATE TABLE source
 (
@@ -10,10 +10,10 @@ CREATE TABLE source
 
 CREATE TABLE stream
 (
-    id   SERIAL UNIQUE,
-    name VARCHAR(256),
+    id        SERIAL UNIQUE,
+    name      VARCHAR(256),
     source_id SERIAL REFERENCES source (id),
-    type STREAM_TYPE
+    type      STREAM_TYPE
 );
 
 CREATE TABLE log
@@ -48,8 +48,9 @@ CREATE TABLE storage
 CREATE TABLE parameter
 (
     id           SERIAL UNIQUE,
-    api_value    VARCHAR(64),
-    display_name VARCHAR(64),
-    value        VARCHAR(256),
-    type         VARIABLE_TYPE
+    api_name     VARCHAR(64) UNIQUE NOT NULL,
+    display_name VARCHAR(64) NOT NULL,
+    value        VARCHAR(256) NOT NULL,
+    type         PARAMETER_VALUE_TYPE NOT NULL,
+    read_only   BOOLEAN NOT NULL
 )
